@@ -57,6 +57,7 @@ Map.prototype.zoomStops = function (stop_id) {
     
 };
 
+/*
 var LMap = function() {
     
     // tile sources
@@ -81,7 +82,7 @@ var LMap = function() {
     var center = [37.77, -122.4];
     this.map_object = L.map('map-canvas',{layers:[tileChoices['OSM']]}).setView(center, 11);
     
-    /*
+    
     var drawControl = new L.Control.Draw({
         draw: {
         polygon:   false,
@@ -90,7 +91,7 @@ var LMap = function() {
         },
     });
     this.map_object.addControl(drawControl);
-    */
+    
 
     this.shapes = [];
     this.stops = [];
@@ -98,6 +99,7 @@ var LMap = function() {
 
 LMap.prototype = new Map();
 LMap.prototype.constructor = LMap;
+*/
 
 
 
