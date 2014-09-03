@@ -1,8 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
     <file alias="display-google.js">web/display-google.js</file>
-    <file alias="leaflet.js">web/vendor/leaflet.js</file>
-    <file alias="leaflet.css">web/vendor/leaflet.css</file>
     <file alias="images">web/vendor/images/</file>
     <file alias="main.css">web/main.css</file>
 </qresource>
