@@ -2,10 +2,10 @@ TripBlazer is a desktop application under development that aims to make viewing,
 
 
 A trip_id selected:
-![alt tag](https://github.com/TripBlazer/TripBlazer/master/screenshots/trip-selected.png)
+![alt tag](https://github.com/TripBlazer/TripBlazer/screenshots/trip-selected.png)
 
 A trip being edited, including its shape:
-![alt tag](https://github.com/TripBlazer/TripBlazer/master/screenshots/shape-editing.png)
+![alt tag](https://github.com/TripBlazer/TripBlazer/screenshots/shape-editing.png)
 
 A stop being edited:
-![alt tag](https://github.com/TripBlazer/TripBlazer/master/screenshots/stop-editing.png)
+![alt tag](https://github.com/TripBlazer/TripBlazer/screenshots/stop-editing.png)
