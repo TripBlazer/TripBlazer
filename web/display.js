@@ -57,52 +57,6 @@ Map.prototype.zoomStops = function (stop_id) {
     
 };
 
-/*
-var LMap = function() {
-    
-    // tile sources
-    var tileChoices = {
-
-        "MapQuest": L.tileLayer(
-                                'http://otile2.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.jpg',
-                                {maxZoom: 19}
-                                ),
-        "MapQuest Sat": L.tileLayer(
-                                    'http://otile2.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg',
-                                    {maxZoom: 18}
-                                    ),
-        "OSM": L.tileLayer(
-                           'http://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                           {maxZoom: 18}
-                           ),
-    };
-    
-    //L.Icon.Default.imagePath = '/static/images/leaflet';
-    
-    var center = [37.77, -122.4];
-    this.map_object = L.map('map-canvas',{layers:[tileChoices['OSM']]}).setView(center, 11);
-    
-    
-    var drawControl = new L.Control.Draw({
-        draw: {
-        polygon:   false,
-        circle:    false,
-        rectangle: false
-        },
-    });
-    this.map_object.addControl(drawControl);
-    
-
-    this.shapes = [];
-    this.stops = [];
-}
-
-LMap.prototype = new Map();
-LMap.prototype.constructor = LMap;
-*/
-
-
-
 var GMap = function() {
     var cent = new google.maps.LatLng(37.9061,-122.5450);
     var opts = {
