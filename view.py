@@ -648,7 +648,7 @@ class RouteTreeView(TreeHierarchicalView):
 
     def populate(self):
         route_label = QStandardItem('route_id')
-        for route_id,route in self.gtfs.route_iterator():
+        for route_id,route in self.gtfs.route_generator():
             route_id = str(route_id)
             route_item = QStandardItem(route_id)
             route_label.appendRow(route_item)
@@ -656,7 +656,7 @@ class RouteTreeView(TreeHierarchicalView):
             trip_label = QStandardItem('trip_id')
             route_item.appendRow(trip_label)
 
-            for trip_id,trip in self.gtfs.trip_iterator(route_id):
+            for trip_id,trip in self.gtfs.trip_generator(route_id):
                 trip_id = str(trip_id)
                 trip_item = QStandardItem(trip_id)
                 trip_label.appendRow(trip_item)
@@ -664,7 +664,7 @@ class RouteTreeView(TreeHierarchicalView):
                 stop_label = QStandardItem('stop_id')
                 trip_item.appendRow(stop_label)
 
-                for stop_time in self.gtfs.stop_times_iterator(trip_id):
+                for stop_time in self.gtfs.stop_times_generator(trip_id):
                     stop_item = QStandardItem(str(stop_time.stop_id))
                     stop_label.appendRow(stop_item)
         self._tree_view_model.appendRow(route_label)

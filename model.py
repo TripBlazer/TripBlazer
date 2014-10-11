@@ -73,15 +73,15 @@ class GTFSModel:
 		stop.stop_lat = point[0]
 		stop.stop_lon = point[1]
 
-	def route_iterator(self):
+	def route_generator(self):
 		for route_id, route in self.gtfs.routes.items():
 			yield route_id, route
 
-	def trip_iterator(self,route_id):
+	def trip_generator(self,route_id):
 		route = self.get_route(route_id)
 		for trip in route.trips:
 			yield trip.trip_id,trip
 
-	def stop_times_iterator(self,trip_id):
+	def stop_times_generator(self,trip_id):
 		for stop_time in self.get_trip(trip_id).GetStopTimes():
 			yield stop_time
