@@ -1,6 +1,6 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-from PyQt4.QtWebKit import QWebView
+from PyQt4.QtWebKit import *
 
 from utils import *
 import json
@@ -10,6 +10,15 @@ import model
 #
 #
 #
+class DataShape(QObject):
+    def __init__(self, parent=None):
+        super(DataShape, self).__init__(parent)
+        self.text = ''
+
+    @pyqtSlot(str)
+    def set_text(self, message):
+        self.text = message
+        #print message
 
 class MainWindow(QMainWindow):
 
@@ -130,14 +139,22 @@ class MainWindow(QMainWindow):
     def save_edit(self):
         self.treeview.save_edit()
 
+
 class MapView(QWebView):
 
-    def __init__(self):
-        super(MapView,self).__init__()
-        self.frame = self.page().currentFrame()
+    def __init__(self, parent=None):
+        super(MapView, self).__init__(parent)
+        self.frame = self.page().mainFrame()
         self.top_widget = self
         self.gtfs = None
+        self.dshape = DataShape()
+        self.dstop = DataShape()
+        #self.dmsg = DataShape()
 
+        self.frame.addToJavaScriptWindowObject("dstop", self.dstop)
+        self.frame.addToJavaScriptWindowObject("dshape", self.dshape)
+        #self.frame.addToJavaScriptWindowObject("dmsg", self.dmsg)
+        
     def layout(self):
         html = open('web/index.html').read()
         self.setHtml(html,QUrl('qrc:/'))
@@ -170,8 +187,8 @@ class MapView(QWebView):
         self.frame.evaluateJavaScript('map.zoomAll();')
         #self.frame.evaluateJavaScript('map.zoomShape(%s);'%shape_id)
 
-    def display_shape(self,shape):
-        self.frame.evaluateJavaScript('map.drawShape("%s",%s);' % (shape.shape_id,json.dumps(shape.points)))
+    def display_shape(self,shape,color):
+        self.frame.evaluateJavaScript('map.drawShape("%s",%s,"%s");' % (shape.shape_id,json.dumps(shape.points),color))
     
     def display_stop(self,stop):
         self.frame.evaluateJavaScript('map.drawStop("%s",%s);' % (stop.stop_id,json.dumps([stop.stop_lat,stop.stop_lon])))
@@ -182,21 +199,22 @@ class MapView(QWebView):
     def cancel_edit(self):
         self.frame.evaluateJavaScript('map.cancelEdit();')
 
-    def shape_save(self,shape_data):
-        if not shape_data:
+    def shape_save(self,shape_str):
+        if not shape_str:
+            #print 'no shape data'
             return
         try:
-            shape_points = list(eval(str(shape_points)))
-            print shape_id,shape_points
-            self.gtfs.modify_shape_points(str(shape_id),shape_points)
+            shape = shape_str.split('=')
+            shape_points = list(eval(str(shape[1])))
+            self.gtfs.modify_shape_points(shape[0], shape_points)
         except:
             warning('problem saving shape coords')
             return
 
-    def stop_save(self,stop_data):
-        if not stop_data:
+    def stop_save(self,stop_str):
+        if not stop_str:
             return
-        stop_id,stop_point = stop_data.split('=')
+        stop_id,stop_point = stop_str.split('=')
         try:
             stop_point = tuple(eval(str(stop_point)))
             self.gtfs.modify_stop_point(str(stop_id),stop_point)
@@ -209,17 +227,16 @@ class MapView(QWebView):
         """ Get stop and shape data from map and save to
         GTFS.
         """
-        edit_data = self.frame.evaluateJavaScript('map.saveEdits();').toString()
-        edit_data = edit_data.split('%')
-        if len(edit_data) == 1:
-            shape_data = edit_data[0]
-            self.shape_save(shape_data)
-        elif len(edit_data) == 2:
-            shape_data,stop_data = edit_data
-            self.shape_save(shape_data)
-            self.stop_save(stop_data)
-        else:
-            warning('No map data to save.')
+        self.frame.evaluateJavaScript('map.saveEdits();')
+        #self.frame.evaluateJavaScript("dshape.set_text(map.getShapeStr());")
+        #self.frame.evaluateJavaScript("dstop.set_text(map.getStopStr());")
+
+        if self.dshape.text != '':
+            self.shape_save(self.dshape.text)
+        
+        if self.dstop.text != '':
+            self.stop_save(self.dstop.text)
+        
 
 
 class EntityView(object):
@@ -402,6 +419,8 @@ class TripEntityView(EntityView):
         self._editable_widgets['block_id'].setCurrentIndex(block_ids.index(trip.block_id))
         
         self._editable_widgets['direction_id'].addItems(['0','1'])
+        if trip.direction_id != '0' and trip.direction_id != '1':
+            self._editable_widgets['direction_id'].addItems(str(trip.direction_id))
         self._editable_widgets['direction_id'].setCurrentIndex(int(trip.direction_id))
         self._editable_widgets['trip_headsign'].insert(trip.trip_headsign)
 
@@ -562,25 +581,25 @@ class HierarchicalView(object):
         self.mapview.map_save()
         self.entity_view.save_edit()
 
-    def display_shape(self,shape):
+    def display_shape(self,shape,color):
         self.mapview.clear()
-        self.mapview.display_shape(shape)
+        self.mapview.display_shape(shape, color)
 
     def display_stop(self,stop):
         self.mapview.clear_stops()
         self.mapview.display_stop(stop)
 
-    def view_shape(self,shape):
-        self.display_shape(shape)
+    def view_shape(self,shape,color):
+        self.display_shape(shape, color)
         self.mapview.zoom_shape(shape.shape_id)
 
     def view_stop(self,stop):
         self.display_stop(stop)
         self.mapview.zoom_stop(stop.stop_id)
 
-    def view_stop_and_shape(self,stop,shape):
+    def view_stop_and_shape(self,stop,shape,color):
         if shape:
-            self.display_shape(shape)
+            self.display_shape(shape, color)
             self.mapview.display_stop(stop)
         else:
             self.display_stop(stop)
@@ -613,10 +632,14 @@ class TreeHierarchicalView(HierarchicalView):
         self.current_trip_id = trip.trip_id
         shape = self.gtfs.get_shape(trip.shape_id)
 
+
+        ### get color
+        route = self.gtfs.get_route(trip.route_id)
+
         self._trip_entity_view.populate(trip)
         self.entity_view = self._trip_entity_view
 
-        self.view_shape(shape)
+        self.view_shape(shape, route.route_color)
 
 
     def stop_selected(self,trip_id,stop_id):
@@ -634,10 +657,12 @@ class TreeHierarchicalView(HierarchicalView):
 
         if not self.current_trip_id or self.current_trip_id != trip_id:
             self.current_trip_id = trip_id
-            self.view_stop_and_shape(stop,self.gtfs.get_shape(self.gtfs.get_trip(trip_id).shape_id))
+            trip = self.gtfs.get_trip(trip_id)
+            route = self.gtfs.get_route(trip.route_id)
+            self.view_stop_and_shape(stop,self.gtfs.get_shape(trip.shape_id),route.route_color)
             self.current_trip_id = trip_id
         else:
-            self.view_stop_and_shape(stop,None)
+            self.view_stop_and_shape(stop,None,None)
 
 
 class RouteTreeView(TreeHierarchicalView):

@@ -33,6 +33,14 @@ Map.prototype.clear = function () {
     
 };
 
+Map.prototype.getShapeStr = function () {
+    
+};
+
+Map.prototype.getStopStr = function () {
+    
+};
+
 Map.prototype.edit = function (bool) {
     
 };
@@ -78,16 +86,22 @@ var GMap = function() {
 GMap.prototype = new Map();
 GMap.prototype.constructor = GMap;
 
-GMap.prototype.drawShape = function (shape_id,points) {
+GMap.prototype.drawShape = function (shape_id,points,color) {
     gpoints = []
     for (var i=0; i< points.length; i++) {
         gpoints.push(new google.maps.LatLng(points[i][0],points[i][1]));
     }
     
-    var gcolor = '#AA0000';
+    var gcolor;
+
+    if (color != null) {
+        gcolor = '#' + color;
+    }
+    else {
+        gcolor = '#AA0000';
+    }
+
     var directionSymbol = {path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW};
-    
-    
     
     var pline = new google.maps.Polyline({
                                          path: gpoints,
@@ -141,33 +155,55 @@ GMap.prototype.clearShapes = function() {
 };
 
 GMap.prototype.edit = function (bool) {
-    this.edit_shape.layer.setEditable(bool);
-    this.edit_stop.layer.setDraggable(bool);
+    if (this.edit_shape != null) {
+        this.edit_shape.layer.setEditable(bool);
+    }
+    if (this.edit_stop != null) {
+        this.edit_stop.layer.setDraggable(bool);
+    }
+  
 };
 
 
 GMap.prototype.cancelEditLayers = function() {
-    this.edit_shape.layer.setEditable(false);
-    this.edit_stop.layer.setDraggable(false);
+    this.edit(false);
 };
 
 GMap.prototype.cancelEdit = function () {
     if (this.map_object.getZoom() > this.zoom_cutoff) {
         this.cancelEditLayers();
-        this.edit_stop.layer.setPosition(this.edit_stop._orig_layer.getPosition());
-        this.edit_shape.layer.setPath(this.edit_shape._orig_layer.getPath());
+        if (this.edit_stop != null) {
+            this.edit_stop.layer.setPosition(this.edit_stop._orig_layer.getPosition());
+        }
+        if (this.edit_shape != null) {
+            this.edit_shape.layer.setPath(this.edit_shape._orig_layer.getPath());
+        }
     }
 };
 
 // is there a json possibility?
 GMap.prototype.saveEdits = function () {
-    
     this.cancelEditLayers();
-    
-    var shape_str = this.edit_shape.shape_id + '=' + this.edit_shape.layer.getPath().getArray().join();
-    var stop_str = this.edit_stop.stop_id + '=' + this.edit_stop.layer.getPosition().toString();
-    
-    return shape_str + '%' + stop_str;
+    dshape.set_text(this.getShapeStr());
+    dstop.set_text(this.getStopStr());
+};
+
+GMap.prototype.getShapeStr = function () {
+    if (this.edit_shape == null) {
+        return '';
+    }
+    else {
+        return this.edit_shape.shape_id + '=' + this.edit_shape.layer.getPath().getArray().join();
+    }
+};
+
+GMap.prototype.getStopStr = function () {
+    if (this.edit_stop == null) {
+        return '';   
+    }
+    else { 
+        return this.edit_stop.stop_id + '=' + this.edit_stop.layer.getPosition().toString();
+    }
 };
 
 GMap.prototype.zoomAll = function () {

@@ -548,7 +548,7 @@ class Trip(GtfsObjectBase):
     """
     self.ValidateRouteId(problems)
     self.ValidateServicePeriod(problems)
-    self.ValidateDirectionId(problems)
+    #self.ValidateDirectionId(problems)
     self.ValidateTripId(problems)
     self.ValidateShapeIdsExistInShapeList(problems)
     self.ValidateRouteIdExistsInRouteList(problems)

@@ -61,15 +61,16 @@ class GTFSModel:
 	def modify_shape_points(self,shape_id,shape_points):
 		"""shape_points = [[lat,long],[lat,long]
 		"""
-		shape = self.gtfs.GetShape(shape_id)
+		shape = self.get_shape(shape_id)
 		shape.ClearPoints()
 		for p in shape_points:
 			shape.AddPoint(p[0],p[1])
+		
 
 	def modify_stop_point(self,stop_id,point):
 		"""Assumes point is [float,float]
 		"""
-		stop = self.gtfs.GetStop(stop_id)
+		stop = self.get_stop(stop_id)
 		stop.stop_lat = point[0]
 		stop.stop_lon = point[1]
 
