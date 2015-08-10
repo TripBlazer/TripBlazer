@@ -1,4 +1,4 @@
-Currently, to run TripBlazer you must install PyQT4 (Qt binding for Python), 
+Currently, to run TripBlazer you must install PyQT4 (Python binding for Qt), 
 download and unzip the TripBlazer source, cd into the source directory, 
 and run "python main.py" on the command line. 
 

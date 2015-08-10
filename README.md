@@ -12,10 +12,10 @@ A stop being edited:
 
 
 Wishlist:
-1) Add automated testing and ensure changes to GTFS data objects maintain dataset integrity. 
-2) Database support for large GTFS sets. SQLite might be a solution.
-3) Transition from Google Maps API to Leaflet, if possible, and optimize performance for map editing.
-4) Simplify GTFS in-memory model and validator. Aim for less code = easier compilation and packaging.
-5) More stylish interface using QML.
-6) Add block view (top level parent is block instead of route). 
-7) Display HTML page generated from the transitfeed validator.
+1. Add automated testing and ensure changes to GTFS data objects maintain dataset integrity. 
+2. Database support for large GTFS sets. SQLite might be a solution.
+3. Transition from Google Maps API to Leaflet, if possible, and optimize performance for map editing.
+4. Simplify GTFS in-memory model and validator. Aim for less code = easier compilation and packaging.
+5. More stylish interface using QML.
+6. Add block view (top level parent is block instead of route). 
+7. Display HTML page generated from the transitfeed validator.
