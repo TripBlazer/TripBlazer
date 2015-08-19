@@ -12,6 +12,7 @@ A stop being edited:
 
 
 Wishlist:
+
 1. Add automated testing and ensure changes to GTFS data objects maintain dataset integrity. 
 2. Database support for large GTFS sets. SQLite might be a solution.
 3. Transition from Google Maps API to Leaflet, if possible, and optimize performance for map editing.
